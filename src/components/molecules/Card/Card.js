@@ -6,6 +6,8 @@ import Paragraph from 'components/atoms/Paragraph/Paragraph';
 import Heading from 'components/atoms/Heading/Heading';
 import Button from 'components/atoms/Button/Button';
 import IconLink from 'assets/icons/link.svg';
+import { connect } from 'react-redux';
+import { removeItem } from 'actions';
 
 const StyledWrapper = styled.div`
   min-height: 380px;
@@ -78,7 +80,17 @@ class Card extends Component {
   handleClickCard = () => this.setState({ redirect: true });
 
   render() {
-    const { id, cardType, title, created, twitterName, articleLink, content } = this.props;
+    const {
+      id,
+      cardType,
+      title,
+      created,
+      twitterName,
+      articleLink,
+      content,
+      // eslint-disable-next-line no-shadow
+      removeItem,
+    } = this.props;
     const { redirect } = this.state;
 
     if (redirect) {
@@ -98,7 +110,9 @@ class Card extends Component {
         <InnerWrapper flex>
           <Paragraph>{content}</Paragraph>
 
-          <Button secondary>REMOVE</Button>
+          <Button onClick={() => removeItem(cardType, id)} secondary>
+            REMOVE
+          </Button>
         </InnerWrapper>
       </StyledWrapper>
     );
@@ -113,12 +127,21 @@ Card.propTypes = {
   twitterName: PropTypes.string,
   articleLink: PropTypes.string,
   content: PropTypes.string.isRequired,
+  removeItem: PropTypes.string,
 };
 
 Card.defaultProps = {
   cardType: 'notes',
   twitterName: null,
   articleLink: null,
+  removeItem: null,
 };
 
-export default Card;
+const mapDispatchToProps = dispatch => ({
+  removeItem: (itemType, id) => dispatch(removeItem(itemType, id)),
+});
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(Card);
